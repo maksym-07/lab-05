@@ -32,6 +32,7 @@ fun CityListScreen(
     cities: List<City>,
     onAddCity: (City) -> Unit,
     onUpdateCity: (City, City) -> Unit,
+    onDeleteCity: (City) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var newCityName by remember { mutableStateOf("") }
@@ -105,53 +106,73 @@ fun CityListScreen(
             }
         }
         if (selectedCity != null) {
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                OutlinedTextField(
-                    value = editedCityName,
-                    onValueChange = { editedCityName = it },
-                    label = { Text("Updated City") },
-                    modifier = Modifier.weight(1f)
-                )
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    OutlinedTextField(
+                        value = editedCityName,
+                        onValueChange = { editedCityName = it },
+                        label = { Text("Updated City") },
+                        modifier = Modifier.weight(1f)
+                    )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                OutlinedTextField(
-                    value = editedProvinceName,
-                    onValueChange = { editedProvinceName = it },
-                    label = { Text("Updated Province") },
-                    modifier = Modifier.weight(1f)
-                )
+                    OutlinedTextField(
+                        value = editedProvinceName,
+                        onValueChange = { editedProvinceName = it },
+                        label = { Text("Updated Province") },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Button(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    onClick = {
-                        val cityToUpdate = selectedCity
-                        if (
-                            cityToUpdate != null &&
-                            editedCityName.isNotBlank() &&
-                            editedProvinceName.isNotBlank()
-                        ) {
-                            onUpdateCity(
-                                cityToUpdate,
-                                City(
-                                    name = editedCityName,
-                                    province = editedProvinceName
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            val cityToUpdate = selectedCity
+                            if (
+                                cityToUpdate != null &&
+                                editedCityName.isNotBlank() &&
+                                editedProvinceName.isNotBlank()
+                            ) {
+                                onUpdateCity(
+                                    cityToUpdate,
+                                    City(
+                                        name = editedCityName,
+                                        province = editedProvinceName
+                                    )
                                 )
-                            )
 
-                            selectedCity = null
-                            editedCityName = ""
-                            editedProvinceName = ""
+                                selectedCity = null
+                                editedCityName = ""
+                                editedProvinceName = ""
+                            }
                         }
+                    ) {
+                        Text("UPDATE CITY")
                     }
-                ) {
-                    Text("UPDATE CITY")
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            val cityToDelete = selectedCity
+                            if (cityToDelete != null) {
+                                onDeleteCity(cityToDelete)
+
+                                selectedCity = null
+                                editedCityName = ""
+                                editedProvinceName = ""
+                            }
+                        }
+                    ) {
+                        Text("DELETE CITY")
+                    }
                 }
             }
         }
@@ -213,7 +234,8 @@ fun CityListScreenPreview() {
                 City("Calgary", "AB")
             ),
             onAddCity = {},
-            onUpdateCity = { _, _ -> }
+            onUpdateCity = { _, _ -> },
+            onDeleteCity = {}
         )
     }
 }
